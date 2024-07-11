@@ -30,4 +30,4 @@ class db_manager:
             return cursor
         except Exception as e:
             connection.close()
-            print(f"Exception occurred: {e}")
+            print(f"Exception raised: {e}")
