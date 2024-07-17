@@ -14,7 +14,7 @@ DB_INFO = {
 try:
     #Open the database, create a connection and upload the data to a database after the ETL process.
     with open(pathlib.Path("database\\train.csv")) as f:
-        csv_table = pd.read_csv(f)
+        csv_table = pd.read_csv(f, header=None)
     conn = db_manager.create_connection()
     uri = f"postgresql+psycopg://{DB_INFO['user']}:{DB_INFO['password']}@{DB_INFO['db_address']}:{DB_INFO['port']}/{DB_INFO['db_name']}"
     engine = create_engine(uri)
