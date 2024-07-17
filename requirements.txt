@@ -2,3 +2,4 @@ psycopg2
 sqlalchemy
 torch
 torchtext
+pandasql
