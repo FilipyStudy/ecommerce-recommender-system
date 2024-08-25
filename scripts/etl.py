@@ -16,8 +16,17 @@ DB_INFO = {
 
 #Create the pattern for regex ETL process
 pattern = re.compile(r"[\u0041-\u1EFF\s]+\s?")
+
+#Download and create a set with the stop-words in english, according to the language of dataset.
 nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))
+
+
+#Create a function for the iteration in each row inside the csv
+def iterator_func (x):
+    match = pattern.findall(x)
+    return "".join(i for i in match if i not in stop_words)
+
 
 try:
     #Open the database, create a connection and upload the data to a database after the ETL process.
@@ -31,14 +40,15 @@ try:
     for x in csv_table.index():
         if csv_table.loc[x, 0] != "1" or csv_table.loc[x, 0] != "2":
             csv_table.drop(x, inplace=True, erros="ignore")
-        temp_phrase = "".join(i for i in pattern.findall(csv_table.loc[x, 1]) if i not in stop_words)
-                              
-        temp_phrase_two = "".join(i for i in pattern.findall(csv_table.loc[x, 2]) if i not in stop_words)
         
-        csv_table.loc[x, 1] = temp_phrase
-        
-        csv_table.loc[x, 2] = temp_phrase_two
-    
+    #Remove incorret values from the first index, stop words and ponctuation characters using regex and nltk
+    csv_table[1] = csv_table[1].astype("str")
+    csv_table[2] = csv_table[2].astype("str")
+    print("Type converting to string are done, starting the REGEX function...")
+    csv_table[1] = csv_table[1].apply(iterator_func)
+    csv_table[2] = csv_table[2].apply(iterator_func)
+    print("Regex iterations are done...")
+
     #Upload the data to a postgresql database
     csv_table.to_sql(name="training_data",
                      con=engine,
