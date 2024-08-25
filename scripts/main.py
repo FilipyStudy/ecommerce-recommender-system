@@ -1,5 +1,8 @@
 from data_visuallization import data_visuallization as dtv
+import socket
 
+
+#TODO: Create a socket process to handle requests
 #Init the script
 while True:
     print("1 for Data Visualization \t 2 for training the machine learning")

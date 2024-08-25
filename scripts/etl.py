@@ -1,4 +1,4 @@
-import db_manager
+from scripts import db_manager
 import pandas as pd
 import pathlib
 from sqlalchemy import create_engine
