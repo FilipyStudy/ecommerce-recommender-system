@@ -23,11 +23,19 @@ stop_words = set(stopwords.words('english'))
 
 
 #Create a function for the iteration in each row inside the csv
-def iterator_func (x):
+def remove_ponctuation (x):
     match = pattern.findall(x)
     return "".join(i for i in match if i not in stop_words).lower()
 
 
+#TODO: Finish the lemmatizer algorithm.
+def lemmatizer (x):
+    return None
+
+
+#TODO: Finish the spell correction algorithm.
+def spell_correction (x):
+    return None
 try:
     #Open the database, create a connection and upload the data to a database after the ETL process.
     with open(pathlib.Path("database\\train.csv")) as f:
@@ -45,8 +53,8 @@ try:
     csv_table[1] = csv_table[1].astype("str")
     csv_table[2] = csv_table[2].astype("str")
     print("Type converting to string are done, starting the REGEX function...")
-    csv_table[1] = csv_table[1].apply(iterator_func)
-    csv_table[2] = csv_table[2].apply(iterator_func)
+    csv_table[1] = csv_table[1].apply(remove_ponctuation)
+    csv_table[2] = csv_table[2].apply(remove_ponctuation)
     print("Regex iterations are done...")
 
     #Upload the data to a postgresql database
