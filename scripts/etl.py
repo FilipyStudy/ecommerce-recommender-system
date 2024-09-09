@@ -25,7 +25,7 @@ stop_words = set(stopwords.words('english'))
 #Create a function for the iteration in each row inside the csv
 def iterator_func (x):
     match = pattern.findall(x)
-    return "".join(i for i in match if i not in stop_words)
+    return "".join(i for i in match if i not in stop_words).lower()
 
 
 try:
