@@ -4,8 +4,15 @@ import pathlib
 from sqlalchemy import create_engine
 import re
 import nltk
-from nltk.corpus import stopwords
+from nltk.corpus import stopwords, words
 from nltk.stem import WordNetLemmatizer
+from nltk.metrics.distance import edit_distance
+
+#Download and create a set with the stop-words in english, according to the language of dataset.
+nltk.download('stopwords')
+nltk.download('wordnet')
+nltk.download('words')
+
 
 DB_INFO = {
     "db_name" : "system_data",
@@ -18,10 +25,11 @@ DB_INFO = {
 #Create the pattern for regex ETL process
 pattern = re.compile(r"[\u0041-\u1EFF\s]+\s?")
 
-#Download and create a set with the stop-words in english, according to the language of dataset.
-nltk.download('stopwords')
-nltk.download('wordnet')
+
 stop_words = set(stopwords.words('english'))
+
+#An list containing the correct words.
+correct_words = words.words()
 
 
 #Create a function for the iteration in each row inside the csv
@@ -30,9 +38,16 @@ def remove_ponctuation (x):
     return "".join(i for i in match if i not in stop_words).lower()
 
 
-#TODO: Finish the spell correction algorithm.
-def spell_correction (x):
-    return None
+#Spell correction function, using the Levenshtein edit-distance
+def spell_correction (s):
+    splitted_array = s.split()
+    final_string = ""
+    
+    for y in splitted_array:
+        temp = [(edit_distance(y, x), x)for x in correct_words if x[0] == y[0]]
+        temp = sorted(temp)
+        final_string += " "+ temp[0][1]
+    return final_string 
 
 
 #Initialize the lemmatizer method:
@@ -59,6 +74,12 @@ try:
     csv_table[1] = csv_table[1].apply(lemmatizer)
     csv_table[2] = csv_table[2].apply(lemmatizer)
     print("Lemmatizing process done!")
+
+    #Spell correction
+    print("Starting spell coarrection process...")
+    csv_table[1] = csv_table[1].apply(spell_correction)
+    csv_table[2] = csv_table[2].apply(spell_correction)
+    print("Spell correction process done!")
 
     #Upload the data to a postgresql database
     csv_table.to_sql(name="training_data",
